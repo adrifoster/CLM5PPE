@@ -24,19 +24,21 @@ while read p; do
 	((i++))
 
 	case=$(basename $basecase)
-	thiscase=$CASEDIR$case"/"$case"_"$p
+	thiscase=$CASEDIR"/"$case"_"$p
 	
 	cd $SCRIPTS
-	./create_clone --case $thiscase --clone $basecase --keepexe
+	./create_clone --case $thiscase --clone $basecase --keepexe --cime-output-root ${out_dir}
 
 	cd $thiscase
 	./case.setup
 	./xmlchange PROJECT=$PROJECT
-	./xmlchange JOB_QUEUE="regular"
+	#./xmlchange JOB_QUEUE="regular"
+	#./xmlchange STOP_N=10
+	#./xmlchange RESUBMIT=5
 	#comment out previous paramfile from user_nl_clm
 	:> user_nl_clm.tmp
 	while read line; do
-	    if [[ $line != *"paramfile"* ]]; then
+	    if [[ $line != *"fates_paramfile"* ]]; then
 		echo $line>>user_nl_clm.tmp
 	    else
 		echo '!'$line>>user_nl_clm.tmp
@@ -45,8 +47,8 @@ while read p; do
 	mv user_nl_clm.tmp user_nl_clm
 
 	#append correct paramfile
-	pfile=$PARAMS$p".nc"
-	pfilestr="paramfile = '"$pfile"'"
+	pfile=$PARAMS"/"$p".nc"
+	pfilestr="fates_paramfile = '"$pfile"'"
 	echo -e "\n"$pfilestr >> user_nl_clm
 
 	#edit first case finidat if needed
