@@ -32,12 +32,11 @@ while read p; do
 	cd $thiscase
 	./case.setup
 	./xmlchange PROJECT=$PROJECT
-	./xmlchange STOP_N=10
-	./xmlchange RESUBMIT=5
+	
 	#comment out previous paramfile from user_nl_clm
 	:> user_nl_clm.tmp
 	while read line; do
-	    if [[ $line != *"fates_paramfile"* ]]; then
+	    if [[ $line != *"paramfile"* ]]; then
 		echo $line>>user_nl_clm.tmp
 	    else
 		echo '!'$line>>user_nl_clm.tmp
@@ -47,7 +46,7 @@ while read p; do
 
 	#append correct paramfile
 	pfile=$PARAMS"/"$p".nc"
-	pfilestr="fates_paramfile = '"$pfile"'"
+	pfilestr="paramfile = '"$pfile"'"
 	echo -e "\n"$pfilestr >> user_nl_clm
 
 	#edit first case finidat if needed
